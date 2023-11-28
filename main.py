@@ -1,7 +1,7 @@
 ### File imports ###
 # ---------------- #
-import nasdaqDataRetrieval as nasDR
-import dataGrouping as dGroup
+import nasdaq_data_retrieval as nasDR
+import data_grouping as dGroup
 
 ### Package imports ###
 # ------------------- #
@@ -20,6 +20,7 @@ import tkinter as tk
 # window.mainloop()
 
 
-df1 = nasDR.nasdaqDataRetrieval()
-df2 = dGroup.dataGrouping(df1)
+df1 = nasDR.nasdaq_data_retrieval()
+reduced_df = dGroup.pca_reduction(df1)
+clustered_data = dGroup.kmeans(reduced_df)
 

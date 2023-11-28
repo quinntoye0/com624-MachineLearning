@@ -3,7 +3,7 @@
 # Market Data
 import yfinance as yf
 
-def nasdaqDataRetrieval():
+def nasdaq_data_retrieval():
 
     ### Nasdaq Data Download ###
     # ------------------------ #
