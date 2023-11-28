@@ -25,6 +25,6 @@ def nasdaqDataRetrieval():
 
     # ### Exporting to csv ###
     # # Save the dataframe to a CSV file
-    # dfTransposed.to_csv('Nasdaq.csv')
+    dfTransposed.to_csv('Nasdaq.csv', mode="w")
 
     return dfTransposed  # X=Dates, y=Stocks

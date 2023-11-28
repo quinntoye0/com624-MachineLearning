@@ -16,19 +16,29 @@ def dataGrouping(df):
     # -------------------------------------- #
     print("\nReducing data size for each stock using PCA...")
 
+    df = pd.DataFrame(df)
+
     # splitting dataset into X and y
-    X = df.iloc[:, 0:-1].values
-    y = df.iloc[:, -1].values
+    # X = df.iloc[:, 0:-1]
+    # y = df.iloc[:, -1]
 
     # applying PCA function on training and testing set of X components
-    pca = PCA(n_components = 10)
-    X_transformed = pca.fit_transform(X)
+    # pca = PCA(n_components = 10)
+    # X_transformed = pca.fit_transform(X)
+    # X_transformed_df = pd.DataFrame(X_transformed, columns=df.columns[:-1])
     
-    reduced_df = pd.DataFrame(X_transformed)
-    reduced_df['target_variable'] = y
+    # reduced_df = pd.DataFrame(X_transformed, columns=df.columns[:-1])
+    # reduced_df['target_variable'] = y
+    
+
+    scaled_df = pd.DataFrame(StandardScaler().fit_transform(df))
+    pca = PCA(n_components = 10)
+    pca.fit(scaled_df)
+    data_pca = pca.transform(scaled_df)
+    pca_df = pd.DataFrame(data_pca,index=df.index[:])
 
     # export reduced dataframe to csv file for analysis
-    reduced_df.to_csv('reduced.csv')
+    pca_df.to_csv('reduced.csv', mode="w")
 
     print("PCA Data Reduction completed ✓")
 
