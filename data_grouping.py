@@ -35,16 +35,49 @@ def pca_reduction(df):
 
 
 
-### KMeans clustering is giving some weird results and i am still trying to wrap my head around the returned clusters ###
+### KMeans Clustering ###
+# --------------------- #
 def kmeans(df):
 
-    # Perform k-means clustering
+    # perform k-means clustering
     kmeans = KMeans(n_clusters=4)
-    kmeans_labels = kmeans.fit(df)
+    kmeans.fit(df)
+    kmeans.predict(df)
+    kmeans_labels = kmeans.labels_
     
-    # print(df.index[x], kmeans_labels[x])
+    # set up lists to split tickers into their kmeans clsuters
+    c0 = []
+    c1 = []
+    c2 = []
+    c3 = []
+
+    # loops reduced df index (tickers names) and splits kmeans labels with ticker names
+    for x, ticker in enumerate(df.index):
+        kmeans_label = kmeans_labels[x]  # grabs current iteration kmeans cluster label
+        if kmeans_label == 0:
+            c0.append(ticker)
+        elif kmeans_label == 1:
+            c1.append(ticker)
+        elif kmeans_label == 2:
+            c2.append(ticker)
+        else:
+            c3.append(ticker)
+
+    # displays clusters
+    print(f"\nCluster 1:")
+    for ticker in c0:
+        print(ticker)
+    print(f"\nCluster 2:")
+    for ticker in c1:
+        print(ticker)
+    print(f"\nCluster 3:")
+    for ticker in c2:
+        print(ticker)
+    print(f"\nCluster 4:")
+    for ticker in c3:
+        print(ticker)
 
     # Print the cluster labels
-    print(kmeans_labels.labels_)
+    # print(kmeans_labels)
 
-    return df
+    return kmeans_labels
