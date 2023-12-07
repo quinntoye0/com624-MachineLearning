@@ -6,10 +6,6 @@ from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 
 
-################ PCA REDUCTION COMPLETE (MOSTLY) ###########################
-##### date and ticker labels are not being transferred atm ###############
-
-
 ### Dimensionality Reduction using PCA ###
 # -------------------------------------- #
 def pca_reduction(df):
@@ -38,6 +34,12 @@ def pca_reduction(df):
 ### KMeans Clustering ###
 # --------------------- #
 def kmeans(df):
+
+    '''
+
+    ### KMEANS HAS BEEN USED TO CREATE CLUSTERS (SEE 'clusters.txt') ###
+    ### THIS FUNCTION NEED NOT BE USED UNLESS WANTING TO RECLUSTER   ###
+
 
     # perform k-means clustering
     kmeans = KMeans(n_clusters=4)
@@ -77,7 +79,22 @@ def kmeans(df):
     for ticker in c3:
         print(ticker)
 
-    # Print the cluster labels
-    # print(kmeans_labels)
+    # write clusters to a .txt file
+    with open("clusters.txt", "w") as clusters_file:
+        clusters_file.write("Cluster 1:\n")
+        for ticker in c0:
+            clusters_file.write(ticker + "\n")
 
-    return kmeans_labels
+        clusters_file.write("\nCluster 2:\n")
+        for ticker in c1:
+            clusters_file.write(ticker + "\n")
+
+        clusters_file.write("\nCluster 3:\n")
+        for ticker in c2:
+            clusters_file.write(ticker + "\n")
+
+        clusters_file.write("\nCluster 4:\n")
+        for ticker in c3:
+            clusters_file.write(ticker + "\n")
+
+    '''

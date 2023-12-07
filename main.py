@@ -10,7 +10,10 @@ import pandas as pd
 from pandas_datareader import data as pdr
 import tkinter as tk
 
+### Chosen tickers list for analysis ###
+### -------------------------------- ###
 
+analysisTickers = ['AMD', 'ORLY', 'BKNG', 'NFLX']
 
 # ### Tkinter Test ###
 # # ---------------- #
@@ -22,5 +25,5 @@ import tkinter as tk
 
 df1 = nasDR.nasdaq_data_retrieval()
 reduced_df = dGroup.pca_reduction(df1)
-clustered_data = dGroup.kmeans(reduced_df)
+#dGroup.kmeans(reduced_df)
 
