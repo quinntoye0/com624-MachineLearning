@@ -2,6 +2,7 @@
 # ---------------- #
 import nasdaq_data_retrieval as nasDR
 import data_grouping as dGroup
+import data_analysis as dAna
 
 ### Package imports ###
 # ------------------- #
@@ -23,7 +24,10 @@ analysisTickers = ['AMD', 'ORLY', 'BKNG', 'NFLX']
 # window.mainloop()
 
 
-df1 = nasDR.nasdaq_data_retrieval()
-reduced_df = dGroup.pca_reduction(df1)
-#dGroup.kmeans(reduced_df)
+dfTuple = nasDR.nasdaq_data_retrieval()
+df = dfTuple[0]  # original nasdaq data download
+df_transposed = dfTuple[1]  # nasdaq data with axis transposed
 
+reduced_df = dGroup.pca_reduction(df_transposed)
+#dGroup.kmeans(reduced_df)
+dAna.data_correlation(df)

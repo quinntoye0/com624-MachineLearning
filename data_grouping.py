@@ -13,7 +13,7 @@ def pca_reduction(df):
     print("\nReducing data size for each stock using PCA...")
 
     # transform nasdaq values into pandas dataframe
-    df = pd.DataFrame(df)
+    #df = pd.DataFrame(df)
 
     scaled_df = pd.DataFrame(StandardScaler().fit_transform(df))  # standardise/scale data
     pca = PCA(n_components = 10)  # set number of values each data field should be reduced to
