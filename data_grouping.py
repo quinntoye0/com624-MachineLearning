@@ -23,7 +23,7 @@ def pca_reduction(df):
     pca_df = pd.DataFrame(data_pca,index=df.index[:])  # add stock labels to reduced df
 
     # export reduced dataframe to csv file for analysis
-    pca_df.to_csv('reduced.csv', mode="w")
+    pca_df.to_csv('data/reduced.csv', mode="w")
 
     print("PCA Data Reduction completed ✓")
 
@@ -80,7 +80,7 @@ def kmeans(df):
         print(ticker)
 
     # write clusters to a .txt file
-    with open("clusters.txt", "w") as clusters_file:
+    with open("data/clusters.txt", "w") as clusters_file:
         clusters_file.write("Cluster 1:\n")
         for ticker in c0:
             clusters_file.write(ticker + "\n")

@@ -10,7 +10,7 @@ def nasdaq_data_retrieval():
 
     # retrieve and create tickers list
     print("\nImporting top 100 tickers...")
-    with open("nasdaq_100_tickers.txt") as tickersFile:
+    with open("data/nasdaq_100_tickers.txt") as tickersFile:
         tickersList = [line.rstrip('\n') for line in tickersFile]
     print("Tickers imported ✓")
 
@@ -25,6 +25,6 @@ def nasdaq_data_retrieval():
 
     # ### Exporting to csv ###
     # # Save the dataframe to a CSV file
-    dfTransposed.to_csv('Nasdaq.csv', mode="w")
+    dfTransposed.to_csv('data/Nasdaq.csv', mode="w")
 
     return dfTransposed  # X=Dates, y=Stocks
