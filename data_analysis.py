@@ -3,11 +3,10 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-analysis_tickers = ['AMD', 'ORLY', 'BKNG', 'NFLX']
 
-### Correlation between all tickers ###
-# ----------------------------------- #
-def data_correlation(df):
+### Correlation between analysis tickers ###
+# ---------------------------------------- #
+def data_correlation(df, analysis_tickers):
 
     correlated_data = df.corr()
     correlated_data.to_csv('data/correlated.csv', mode="w")
@@ -30,4 +29,25 @@ def data_correlation(df):
             
             # displays correlations
             print(f"\n{header}\n----\nTop 10:\n{top_corr_reverse}\nBottom 10:\n{bottom_corr}")
+
+
+### Exploratory Data Analysis ###
+# ----------------------------- #
+
+def display_shape(df, ticker):
+    
+    ticker_name = ticker[0]
+    ticker_row = ticker[1]
+
+    plt.title(f"{ticker_name} Closing Values 1 Year")
+    plt.xlabel("Date")
+    plt.ylabel("Closing Value")
+    plt.plot(ticker_row)
+    plt.show()
+
+
+
+
+
+
 

@@ -25,8 +25,7 @@ def nasdaq_data_retrieval():
     df_transposed = df.T  # transposes df (flips collumns/rows)
     print("Nasdaq data downloaded ✓")
 
-    # ### Exporting to csv ###
-    # # Save the dataframe to a CSV file
+    # exports the dataframe to a CSV file
     df_transposed.to_csv('data/Nasdaq.csv', mode="w")
 
     return (df, df_transposed)  

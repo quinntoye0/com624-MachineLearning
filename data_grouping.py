@@ -98,3 +98,14 @@ def kmeans(df):
             clusters_file.write(ticker + "\n")
 
     '''
+
+def select_analysis_rows(df, analysis_tickers):
+
+    ana_rows = []
+    for x in range(len(df.index)):  # loops each ticker label in df
+        if df.index[x] in analysis_tickers:  # checks if current label is one of the analysis tickers
+            # if yes:
+            row = df.iloc[x, :]
+            ana_rows.append(row)  # capture specific row
+            
+    return ana_rows
