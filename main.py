@@ -52,3 +52,5 @@ ana_rows = [amd, orly, bkng, nflx]
 '''dAna.eda_line_chart(amd) ''' ######### REPLACE ROW WITH USER CHOSEN ONE - NOT HARD CODED TICKER ROW
 '''dAna.eda_box_plot(amd) ''' # Box plot with all analysis stocks   ######### REPLACE ROW WITH USER CHOSEN ONE - NOT HARD CODED TICKER ROW
 '''dAna.eda_histogram(amd) ''' # Histogram with analysis stocks
+
+'''dAna.ml_arima(amd) ''' ######## NOT WORKING ############ ARIMA prediction model

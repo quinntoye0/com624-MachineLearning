@@ -2,6 +2,8 @@
 # ------------------- #
 import pandas as pd
 import matplotlib.pyplot as plt
+from statsmodels.tsa.arima.model import ARIMA
+from pmdarima import auto_arima
 
 
 ### Correlation between analysis tickers ###
@@ -34,6 +36,7 @@ def data_correlation(df, analysis_tickers):
 ### Exploratory Data Analysis ###
 # ----------------------------- #
 
+# line chart to show closing prices over the year
 def eda_line_chart(ticker):
     
     ticker_name = ticker[0]
@@ -45,6 +48,7 @@ def eda_line_chart(ticker):
     plt.plot(ticker_row)
     plt.show()
 
+# box plot to show spread of closing prices
 def eda_box_plot(ticker):
 
     ticker_name = ticker[0]
@@ -57,6 +61,7 @@ def eda_box_plot(ticker):
     plt.ylabel("Closing Price (USD)")
     plt.show()
 
+# histogram to show frequency of closing prices
 def eda_histogram(ticker):
 
     ticker_name = ticker[0]
@@ -68,3 +73,51 @@ def eda_histogram(ticker):
     plt.xlabel(f"{ticker_name} Closing Price")
     plt.ylabel("Frequency")
     plt.show()
+
+
+### Machine Learning Models ###
+# --------------------------- #
+
+# ARIMA #
+def ml_arima(ticker):
+
+    ticker_name = ticker[0]
+    ticker_row = ticker[1]
+
+    start_date = ticker_row.index[-1].date()
+
+    model = auto_arima(ticker_row, trace=True, error_action="ignore", suppress_warnings=True)
+    model_order = model.get_params()["order"]
+
+    model = ARIMA(ticker_row, order=model_order)
+    model_fit = model.fit()
+
+    n_periods = 30  # number of forecast periods
+    forecast, stderr, conf_int = model_fit.forecast(ticker_row.size, alpha=0.5)
+    forecast_series = pd.Series(forecast, index=ticker_row.index)
+    lower_series = pd.Series(conf_int[:, 0], index=ticker_row.index)
+    upper_series = pd.Series(conf_int[:, 0], index=ticker_row.index)
+
+    plt.plot(ticker_row, colour = 'blue', label='Actual Stock Price')
+    plt.plot(forecast_series, colour = 'red', label='Predicted Stock Price')
+    plt.fill_between(lower_series.index, lower_series, upper_series, color="lightgray", alpha=0.5)
+    
+    # plt.plot(ticker_row.index, ticker_row, label="Actual")
+    # plt.plot(forecast.index, forecast, label="Forecast")
+    # plt.fill_between(forecast.index, conf_int[:, 0], conf_int[:, 1], color="lightgray", alpha=0.5)
+
+    plt.legend()
+    plt.xlabel("Date")
+    plt.ylabel("Actual Stock Price")
+    plt.title("ARIMA Model Forecast")
+    plt.show()
+
+
+def ml_facebook_prophet(ticker):
+    
+    ticker_name = ticker[0]
+    ticker_row = ticker[1]
+
+
+
+
