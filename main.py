@@ -54,3 +54,4 @@ ana_rows = [amd, orly, bkng, nflx]
 '''dAna.eda_histogram(amd) ''' # Histogram with analysis stocks
 
 '''dAna.ml_arima(amd) ''' ######## NOT WORKING ############ ARIMA prediction model
+dAna.ml_facebook_prophet(bkng)  # Facebook Prophet prediction model

@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from statsmodels.tsa.arima.model import ARIMA
 from pmdarima import auto_arima
+from prophet import Prophet
 
 
 ### Correlation between analysis tickers ###
@@ -114,10 +115,30 @@ def ml_arima(ticker):
 
 
 def ml_facebook_prophet(ticker):
-    
+
     ticker_name = ticker[0]
     ticker_row = ticker[1]
 
+    print(ticker_row)
 
+    df_model = pd.DataFrame(ticker_row)
+    df_model = df_model.reset_index()
+    df_model.columns = ['ds', 'y']
+    
+    print(df_model)
+
+    fb_model = Prophet()
+    fb_model.fit(df_model)
+
+    future = fb_model.make_future_dataframe(periods=100)
+    forecast = fb_model.predict(future)
+
+    prophet_graph = fb_model.plot(forecast)
+    prophet_graph.show()
+
+    plt.xlabel("Date")
+    plt.ylabel(f"Nasdaq Closing Price")
+    plt.title(f"{ticker_name} - Nasdaq Closing Price Forecast (Prophet)")
+    plt.show()
 
 
