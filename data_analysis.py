@@ -34,20 +34,37 @@ def data_correlation(df, analysis_tickers):
 ### Exploratory Data Analysis ###
 # ----------------------------- #
 
-def display_shape(df, ticker):
+def eda_line_chart(ticker):
     
     ticker_name = ticker[0]
     ticker_row = ticker[1]
 
-    plt.title(f"{ticker_name} Closing Values 1 Year")
+    plt.title(f"{ticker_name} - Line Chart of Closing Values 1 Year")
     plt.xlabel("Date")
     plt.ylabel("Closing Value")
     plt.plot(ticker_row)
     plt.show()
 
+def eda_box_plot(ticker):
 
+    ticker_name = ticker[0]
+    ticker_row = ticker[1]
 
+    plt.figure(figsize=(8, 6))
+    plt.boxplot(ticker_row)
+    plt.title(f"{ticker_name} - Boxplot of Closing Values 1 Year")
+    plt.xlabel(ticker_name)
+    plt.ylabel("Closing Price (USD)")
+    plt.show()
 
+def eda_histogram(ticker):
 
+    ticker_name = ticker[0]
+    ticker_row = ticker[1]
 
-
+    plt.figure(figsize=(8, 6))
+    plt.hist(ticker_row, bins=10)
+    plt.title(f"{ticker_name} - Histogram Showing Frequency of Closing Values 1 Year")
+    plt.xlabel(f"{ticker_name} Closing Price")
+    plt.ylabel("Frequency")
+    plt.show()

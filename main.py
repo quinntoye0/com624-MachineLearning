@@ -38,6 +38,7 @@ amd = ("AMD", ana_rows[0])
 orly = ("ORLY", ana_rows[1])
 bkng= ("BKNG", ana_rows[2])
 nflx = ("NFLX", ana_rows[3])
+ana_rows = [amd, orly, bkng, nflx]
 
 '''reduced_df = dGroup.pca_reduction(df_transposed) '''  # PCA Reduction
 '''dGroup.kmeans(reduced_df) '''  # KMeans Clustering
@@ -45,8 +46,9 @@ nflx = ("NFLX", ana_rows[3])
 ### Data Analysis ###
 # ----------------- #
 
-dAna.data_correlation(df, analysis_tickers)  # Data Correlation #
+'''dAna.data_correlation(df, analysis_tickers) ''' # Data Correlation #
 
 # Exploratory Data Analysis #
-dAna.display_shape(df, amd)  ######### REPLACE ROW WITH USER CHOSEN ONE - NOT HARD CODED TICKER ROW
-
+'''dAna.eda_line_chart(amd) ''' ######### REPLACE ROW WITH USER CHOSEN ONE - NOT HARD CODED TICKER ROW
+'''dAna.eda_box_plot(amd) ''' # Box plot with all analysis stocks   ######### REPLACE ROW WITH USER CHOSEN ONE - NOT HARD CODED TICKER ROW
+'''dAna.eda_histogram(amd) ''' # Histogram with analysis stocks
