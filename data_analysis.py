@@ -1,10 +1,19 @@
 ### Package imports ###
 # ------------------- #
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from statsmodels.tsa.arima.model import ARIMA
 from pmdarima import auto_arima
 from prophet import Prophet
+from sklearn.preprocessing import MinMaxScaler
+from keras.layers import Dense,LSTM
+from keras.models import Sequential
+import math
+from sklearn.metrics import mean_squared_error
+# hides TensorFlow warnings
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '0'
 
 
 ### Correlation between analysis tickers ###
@@ -113,7 +122,7 @@ def ml_arima(ticker):
     plt.title("ARIMA Model Forecast")
     plt.show()
 
-
+# Facebook Prophet #
 def ml_facebook_prophet(ticker):
 
     ticker_name = ticker[0]
@@ -141,4 +150,55 @@ def ml_facebook_prophet(ticker):
     plt.title(f"{ticker_name} - Nasdaq Closing Price Forecast (Prophet)")
     plt.show()
 
+# LSTM #
+def ml_lstm(ticker):
+
+    ticker_name = ticker[0]
+    ticker_row = ticker[1]
+
+    scaler = MinMaxScaler()
+    ticker_row2 = scaler.fit_transform(np.array(ticker_row).reshape(-1,1))
+
+    train_size = int(len(ticker_row2)*0.65)
+    train, test = ticker_row2[:train_size], ticker_row2[train_size:]    
+
+    def create_dataset(ticker_row2, time_step = 1):
+        dataX,dataY = [],[]
+        for i in range(len(ticker_row2)-time_step-1):
+                    a = ticker_row2[i:(i+time_step),0]
+                    dataX.append(a)
+                    dataY.append(ticker_row2[i + time_step,0])
+        return np.array(dataX),np.array(dataY)
+
+    window_size = 60
+    train_X, train_y = create_dataset(train, window_size)
+    test_X, test_y = create_dataset(test, window_size)
+
+    model = Sequential()
+    model.add(LSTM(units=50, return_sequences=True, input_shape=(window_size, 1)))
+    model.add(LSTM(units=50))
+    model.add(Dense(1))
+    model.compile(loss='mean_squared_error', optimizer='adam')
+
+    # Train the model
+    model.fit(train_X, train_y, epochs=100, batch_size=32, validation_data=(test_X, test_y))
+
+    # Make predictions
+    predictions = model.predict(test_X)
+
+    predictions = scaler.inverse_transform(predictions)
+
+    # Get test set dates for plotting
+    test = pd.DataFrame(test)
+    test_dates = test.index[window_size:]
+
+    # Plot actual and predicted values
+    plt.figure(figsize=(12, 6))
+    plt.plot(test_dates, test["Close"], label="Actual Price")
+    plt.plot(test_dates, predictions, label="Predicted Price")
+    plt.title("NASDAQ Price Prediction")
+    plt.xlabel("Date")
+    plt.ylabel("Price")
+    plt.legend()
+    plt.show()
 
