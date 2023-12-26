@@ -11,7 +11,7 @@ from tensorflow import keras
 from keras.layers import Dense,LSTM
 from keras.models import Sequential
 import math
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 from sklearn.linear_model import LinearRegression
 # hides TensorFlow warnings
 import os
@@ -27,11 +27,11 @@ def data_correlation(df, analysis_tickers):
 
 
     print("\nData Corerlation:")
-    for x in range(len(correlated_data.index)):  # loops each ticker label in correlated df
-        if correlated_data.index[x] in analysis_tickers:  # checks if current label is one of the analysis tickers
+    for i in range(len(correlated_data.index)):  # loops each ticker label in correlated df
+        if correlated_data.index[i] in analysis_tickers:  # checks if current label is one of the analysis tickers
             # if yes:
-            header = correlated_data.index[x]  # ticker label saved
-            row = correlated_data.iloc[x, :]  # row captured
+            header = correlated_data.index[i]  # ticker label saved
+            row = correlated_data.iloc[i, :]  # row captured
             sorted_row = row.sort_values()  # row ordered
 
             # top/bottom 10 values captured
@@ -96,32 +96,51 @@ def ml_arima(ticker):
     ticker_name = ticker[0]
     ticker_row = ticker[1]
 
-    start_date = ticker_row.index[-1].date()
+    train_size = int(len(ticker_row)*0.75)
+    train, test = ticker_row[:train_size], ticker_row[train_size:]
 
-    model = auto_arima(ticker_row, trace=True, error_action="ignore", suppress_warnings=True)
+    history = [x for x in train]
+    y = test
+
+    # make first prediction
+    predictions = list()
+    model = auto_arima(ticker_row, trace=True, error_action="ignore", suppress_warnings=True)  # auto finds the ideal p,d,q values
     model_order = model.get_params()["order"]
+    # redict
+    model = ARIMA(history, order=model_order)  # defines model
+    model_fit = model.fit()  # fits model
+    yhat = model_fit.forecast()[0]  # initial forecast
+    predictions.append(yhat)
+    history.append(y[0])
 
-    model = ARIMA(ticker_row, order=model_order)
-    model_fit = model.fit()
+    # rolling forecasts
+    for i in range(1, len(y)):
+        # predict
+        model = ARIMA(history, order=(1,1,0))
+        model_fit = model.fit()
+        yhat = model_fit.forecast()[0]
+        predictions.append(yhat)
+        # observation
+        obs = y[i]
+        history.append(obs)
 
-    n_periods = 30  # number of forecast periods
-    forecast, stderr, conf_int = model_fit.forecast(ticker_row.size, alpha=0.5)
-    forecast_series = pd.Series(forecast, index=ticker_row.index)
-    lower_series = pd.Series(conf_int[:, 0], index=ticker_row.index)
-    upper_series = pd.Series(conf_int[:, 0], index=ticker_row.index)
+    # report performance
+    mse = mean_squared_error(y, predictions)
+    print('MSE: '+str(mse))
+    mae = mean_absolute_error(y, predictions)
+    print('MAE: '+str(mae))
+    rmse = math.sqrt(mean_squared_error(y, predictions))
+    print('RMSE: '+str(rmse))
 
-    plt.plot(ticker_row, colour = 'blue', label='Actual Stock Price')
-    plt.plot(forecast_series, colour = 'red', label='Predicted Stock Price')
-    plt.fill_between(lower_series.index, lower_series, upper_series, color="lightgray", alpha=0.5)
-    
-    # plt.plot(ticker_row.index, ticker_row, label="Actual")
-    # plt.plot(forecast.index, forecast, label="Forecast")
-    # plt.fill_between(forecast.index, conf_int[:, 0], conf_int[:, 1], color="lightgray", alpha=0.5)
+    plt.figure(figsize=(16,8))
+    plt.plot(ticker_row, color='green', label = 'Train Stock Price')
+    plt.plot(test.index, y, color = 'red', label = 'Real Stock Price')
+    plt.plot(test.index, predictions, color = 'blue', label = 'Predicted Stock Price')
 
     plt.legend()
     plt.xlabel("Date")
-    plt.ylabel("Actual Stock Price")
-    plt.title("ARIMA Model Forecast")
+    plt.ylabel("Stock Price")
+    plt.title(f"{ticker_name} - Nasdaq Closing Price Forecast (ARIMA)")
     plt.show()
 
 # Facebook Prophet #

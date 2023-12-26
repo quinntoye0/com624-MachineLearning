@@ -54,8 +54,8 @@ def kmeans(df):
     c3 = []
 
     # loops reduced df index (tickers names) and splits kmeans labels with ticker names
-    for x, ticker in enumerate(df.index):
-        kmeans_label = kmeans_labels[x]  # grabs current iteration kmeans cluster label
+    for i, ticker in enumerate(df.index):
+        kmeans_label = kmeans_labels[i]  # grabs current iteration kmeans cluster label
         if kmeans_label == 0:
             c0.append(ticker)
         elif kmeans_label == 1:
@@ -102,10 +102,10 @@ def kmeans(df):
 def select_analysis_rows(df, analysis_tickers):
 
     ana_rows = []
-    for x in range(len(df.index)):  # loops each ticker label in df
-        if df.index[x] in analysis_tickers:  # checks if current label is one of the analysis tickers
+    for i in range(len(df.index)):  # loops each ticker label in df
+        if df.index[i] in analysis_tickers:  # checks if current label is one of the analysis tickers
             # if yes:
-            row = df.iloc[x, :]
+            row = df.iloc[i, :]
             ana_rows.append(row)  # capture specific row
             
     return ana_rows
