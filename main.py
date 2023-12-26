@@ -55,4 +55,5 @@ ana_rows = [amd, orly, bkng, nflx]
 
 #dAna.ml_arima(amd)  ######## NOT WORKING ############ ARIMA prediction model
 '''dAna.ml_facebook_prophet(bkng) ''' # Facebook Prophet prediction model
-dAna.ml_lstm(amd)  ## SORT OF WORK I DUNNO ### # LSTM Prediction Model
+'''dAna.ml_lstm(bkng) ''' # LSTM Prediction Model
+dAna.ml_linear_regression(amd)  # Linear Regression Model

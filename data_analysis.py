@@ -12,6 +12,7 @@ from keras.layers import Dense,LSTM
 from keras.models import Sequential
 import math
 from sklearn.metrics import mean_squared_error
+from sklearn.linear_model import LinearRegression
 # hides TensorFlow warnings
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '0'
@@ -192,4 +193,32 @@ def ml_lstm(ticker):
     plt.ylabel("Value")
     plt.legend()
     plt.show()
+
+
+# Linear Regression # 
+def ml_linear_regression(ticker):
+
+    ticker_name = ticker[0]
+    ticker_row = ticker[1]
+
+    # extract close prices and reshape for linear regression
+    close_prices = ticker_row.values.reshape(-1, 1)
+
+    # create linear regression model
+    model = LinearRegression()
+    model.fit(np.arange(len(close_prices)).reshape(-1, 1), close_prices)
+
+    # use model to predict values
+    predictions = model.predict(np.arange(len(close_prices)).reshape(-1, 1))
+
+    # plot actual and predicted values
+    plt.figure(figsize=(12, 6))
+    plt.plot(close_prices, label="Actual Price")
+    plt.plot(np.arange(len(close_prices)), predictions, label="Predicted Price")
+    plt.title(f"{ticker_name} - Linear Regression")
+    plt.xlabel("Date")
+    plt.ylabel("Close Price")
+    plt.legend()
+    plt.show()
+
 
