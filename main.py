@@ -46,13 +46,13 @@ ana_rows = [amd, orly, bkng, nflx]
 ### Data Analysis ###
 # ----------------- #
 
-'''dAna.data_correlation(df, analysis_tickers) ''' # Data Correlation #
+'''dAna.data_correlation(df, anal ysis_tickers) ''' # Data Correlation #
 
 # Exploratory Data Analysis #
 '''dAna.eda_line_chart(amd) ''' ######### REPLACE ROW WITH USER CHOSEN ONE - NOT HARD CODED TICKER ROW
 '''dAna.eda_box_plot(amd) ''' # Box plot with all analysis stocks   ######### REPLACE ROW WITH USER CHOSEN ONE - NOT HARD CODED TICKER ROW
 '''dAna.eda_histogram(amd) ''' # Histogram with analysis stocks
 
-'''dAna.ml_arima(amd) ''' ######## NOT WORKING ############ ARIMA prediction model
+#dAna.ml_arima(amd)  ######## NOT WORKING ############ ARIMA prediction model
 '''dAna.ml_facebook_prophet(bkng) ''' # Facebook Prophet prediction model
-dAna.ml_lstm(amd)  # LSTM Prediction Model
+dAna.ml_lstm(amd)  ## SORT OF WORK I DUNNO ### # LSTM Prediction Model

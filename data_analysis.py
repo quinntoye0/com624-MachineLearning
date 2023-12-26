@@ -7,6 +7,7 @@ from statsmodels.tsa.arima.model import ARIMA
 from pmdarima import auto_arima
 from prophet import Prophet
 from sklearn.preprocessing import MinMaxScaler
+from tensorflow import keras
 from keras.layers import Dense,LSTM
 from keras.models import Sequential
 import math
@@ -128,13 +129,9 @@ def ml_facebook_prophet(ticker):
     ticker_name = ticker[0]
     ticker_row = ticker[1]
 
-    print(ticker_row)
-
     df_model = pd.DataFrame(ticker_row)
     df_model = df_model.reset_index()
     df_model.columns = ['ds', 'y']
-    
-    print(df_model)
 
     fb_model = Prophet()
     fb_model.fit(df_model)
@@ -162,43 +159,37 @@ def ml_lstm(ticker):
     train_size = int(len(ticker_row2)*0.65)
     train, test = ticker_row2[:train_size], ticker_row2[train_size:]    
 
-    def create_dataset(ticker_row2, time_step = 1):
-        dataX,dataY = [],[]
-        for i in range(len(ticker_row2)-time_step-1):
-                    a = ticker_row2[i:(i+time_step),0]
-                    dataX.append(a)
-                    dataY.append(ticker_row2[i + time_step,0])
-        return np.array(dataX),np.array(dataY)
+    def create_dataset(X, time_steps):
+        Xs, ys = [], []
+        for i in range(len(X) - time_steps):
+            v = X[i:i + time_steps]
+            Xs.append(v)
+            ys.append(X[i + time_steps])
+        return np.array(Xs), np.array(ys)
 
-    window_size = 60
-    train_X, train_y = create_dataset(train, window_size)
-    test_X, test_y = create_dataset(test, window_size)
+    time_steps = 10
+    train_X, train_y = create_dataset(train, time_steps)
+    test_X, test_y = create_dataset(test, time_steps)
 
     model = Sequential()
-    model.add(LSTM(units=50, return_sequences=True, input_shape=(window_size, 1)))
-    model.add(LSTM(units=50))
+    model.add(LSTM(units=50, return_sequences=True, input_shape=(time_steps, 1)))
     model.add(Dense(1))
-    model.compile(loss='mean_squared_error', optimizer='adam')
+    model.compile(loss='mean_squared_error', optimizer=keras.optimizers.Adam(0.001))
 
-    # Train the model
-    model.fit(train_X, train_y, epochs=100, batch_size=32, validation_data=(test_X, test_y))
+    # train the model
+    model.fit(train_X, train_y, epochs=30, batch_size=16, validation_split=0.1, verbose=1, shuffle=False)
 
-    # Make predictions
+    # make predictions
     predictions = model.predict(test_X)
+    predictions = predictions.reshape(78, 10)  # reshapes to 2D
 
-    predictions = scaler.inverse_transform(predictions)
-
-    # Get test set dates for plotting
-    test = pd.DataFrame(test)
-    test_dates = test.index[window_size:]
-
-    # Plot actual and predicted values
+    # plot actual and predicted values
     plt.figure(figsize=(12, 6))
-    plt.plot(test_dates, test["Close"], label="Actual Price")
-    plt.plot(test_dates, predictions, label="Predicted Price")
-    plt.title("NASDAQ Price Prediction")
-    plt.xlabel("Date")
-    plt.ylabel("Price")
+    plt.plot(test_y, label="Actual Price")
+    plt.plot(predictions, label="Predicted Price")
+    plt.title(f"{ticker_name} - LSTM")
+    plt.xlabel("Time Step")
+    plt.ylabel("Value")
     plt.legend()
     plt.show()
 
