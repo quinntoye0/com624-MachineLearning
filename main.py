@@ -3,6 +3,7 @@
 import nasdaq_data_retrieval as nasDR
 import data_grouping as dGroup
 import data_analysis as dAna
+import data_predictions as dPred
 
 ### Package imports ###
 # ------------------- #
@@ -32,6 +33,9 @@ df_transposed = dfTuple[1]  # nasdaq data with axis transposed
 ### Data Grouping ###
 # ----------------- #
 
+'''reduced_df = dGroup.pca_reduction(df_transposed) '''  # PCA Reduction
+'''dGroup.kmeans(reduced_df) '''  # KMeans Clustering
+
 ana_rows = dGroup.select_analysis_rows(df_transposed, analysis_tickers)  # select specific rows from df for analysis
 # splitting rows
 amd = ("AMD", ana_rows[0])
@@ -40,8 +44,6 @@ bkng= ("BKNG", ana_rows[2])
 nflx = ("NFLX", ana_rows[3])
 ana_rows = [amd, orly, bkng, nflx]
 
-'''reduced_df = dGroup.pca_reduction(df_transposed) '''  # PCA Reduction
-'''dGroup.kmeans(reduced_df) '''  # KMeans Clustering
 
 ### Data Analysis ###
 # ----------------- #
@@ -53,7 +55,10 @@ ana_rows = [amd, orly, bkng, nflx]
 '''dAna.eda_box_plot(amd) ''' # Box plot with all analysis stocks   ######### REPLACE ROW WITH USER CHOSEN ONE - NOT HARD CODED TICKER ROW
 '''dAna.eda_histogram(amd) ''' # Histogram with analysis stocks
 
-dAna.ml_arima(amd)  ######## NOT WORKING ############ ARIMA prediction model
-'''dAna.ml_facebook_prophet(bkng) ''' # Facebook Prophet prediction model
-'''dAna.ml_lstm(bkng) ''' # LSTM Prediction Model
-'''dAna.ml_linear_regression(amd) ''' # Linear Regression Model
+
+### Data Predictions ###
+# -------------------- #
+'''dPred.ml_arima(amd) ''' # ARIMA prediction model
+dPred.ml_facebook_prophet(bkng)  # Facebook Prophet prediction model
+'''dPred.ml_lstm(bkng) ''' # LSTM Prediction Model
+'''dPred.ml_linear_regression(amd) ''' # Linear Regression Model
