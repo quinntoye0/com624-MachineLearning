@@ -34,14 +34,14 @@ def ml_arima(ticker):
     y = test
 
     # make first prediction
-    predictions = list()
+    arima_predictions = list()
     model = auto_arima(ticker_row, trace=True, error_action="ignore", suppress_warnings=True)  # auto finds the ideal p,d,q values
     model_order = model.get_params()["order"]
     # redict
     model = ARIMA(history, order=model_order)  # defines model
     model_fit = model.fit()  # fits model
     yhat = model_fit.forecast()[0]  # initial forecast
-    predictions.append(yhat)
+    arima_predictions.append(yhat)
     history.append(y[0])
 
     # rolling forecasts
@@ -50,29 +50,31 @@ def ml_arima(ticker):
         model = ARIMA(history, order=(1,1,0))
         model_fit = model.fit()
         yhat = model_fit.forecast()[0]
-        predictions.append(yhat)
+        arima_predictions.append(yhat)
         # observation
         obs = y[i]
         history.append(obs)
 
     # report performance
-    mse = mean_squared_error(y, predictions)
+    mse = mean_squared_error(y, arima_predictions)
     print('MSE: '+str(mse))
-    mae = mean_absolute_error(y, predictions)
+    mae = mean_absolute_error(y, arima_predictions)
     print('MAE: '+str(mae))
-    rmse = math.sqrt(mean_squared_error(y, predictions))
+    rmse = math.sqrt(mean_squared_error(y, arima_predictions))
     print('RMSE: '+str(rmse))
 
     plt.figure(figsize=(16,8))
-    plt.plot(ticker_row, color='green', label = 'Train Stock Price')
-    plt.plot(test.index, y, color = 'red', label = 'Real Stock Price')
-    plt.plot(test.index, predictions, color = 'blue', label = 'Predicted Stock Price')
+    plt.plot(ticker_row, color='green', label='Train Stock Price')
+    plt.plot(test.index, y, color='red', label='Real Stock Price')
+    plt.plot(test.index, arima_predictions, color='blue', label='Predicted Stock Price')
 
     plt.legend()
     plt.xlabel("Date")
     plt.ylabel("Stock Price")
     plt.title(f"{ticker_name} - Nasdaq Closing Price Forecast (ARIMA)")
     plt.show()
+
+    return (test.index, arima_predictions)
 
 # Facebook Prophet #
 def ml_facebook_prophet(ticker):
@@ -88,15 +90,17 @@ def ml_facebook_prophet(ticker):
     fb_model.fit(df_model)
 
     future = fb_model.make_future_dataframe(periods=100)
-    forecast = fb_model.predict(future)
+    prophet_predictions = fb_model.predict(future)
 
-    prophet_graph = fb_model.plot(forecast)
+    prophet_graph = fb_model.plot(prophet_predictions)
     prophet_graph.show()
 
     plt.xlabel("Date")
     plt.ylabel(f"Nasdaq Closing Price")
     plt.title(f"{ticker_name} - Nasdaq Closing Price Forecast (Prophet)")
     plt.show()
+
+    return (fb_model, prophet_predictions)
 
 # LSTM #
 def ml_lstm(ticker):
@@ -156,19 +160,46 @@ def ml_linear_regression(ticker):
 
     # create linear regression model
     model = LinearRegression()
-    model.fit(np.arange(len(close_prices)).reshape(-1, 1), close_prices)
 
-    # use model to predict values
-    predictions = model.predict(np.arange(len(close_prices)).reshape(-1, 1))
+    # use model to make extended predictions
+    model.fit(np.arange(len(close_prices)).reshape(-1, 1), close_prices)
+    extend_lin_x = np.arange(0, len(close_prices) + 100)
+    extend_lin_y = model.predict(extend_lin_x.reshape(-1, 1))
 
     # plot actual and predicted values
     plt.figure(figsize=(12, 6))
     plt.plot(close_prices, label="Actual Price")
-    plt.plot(np.arange(len(close_prices)), predictions, label="Predicted Price")
+    plt.plot(extend_lin_x, extend_lin_y, label="Predicted Price")
     plt.title(f"{ticker_name} - Linear Regression")
+    plt.xlabel("Time")
+    plt.ylabel("Close Price")
+    plt.legend()
+    plt.show()
+
+    return (extend_lin_x, extend_lin_y)
+
+
+def forecasting(ticker, prophet_predictions, linear_regression):
+
+    ticker_name = ticker[0]
+    ticker_row = ticker[1]
+
+    prophet_model = prophet_predictions[0]
+    prophet_preds = prophet_predictions[1]
+
+    linear_x = linear_regression[0]
+    linear_y = linear_regression[1]
+
+    graph = prophet_model.plot(prophet_preds)
+    graph.show()
+
+    plt.plot(prophet_preds['ds'], linear_y, color="orange",label="Predicted Price")  # linear regression
+    plt.title(f"{ticker_name} - Forecasting")
     plt.xlabel("Date")
     plt.ylabel("Close Price")
     plt.legend()
     plt.show()
+
+
 
 
