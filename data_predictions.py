@@ -77,7 +77,7 @@ def ml_arima(ticker):
     return (test.index, arima_predictions)
 
 # Facebook Prophet #
-def ml_facebook_prophet(ticker):
+def ml_facebook_prophet(ticker, forecast_length):
 
     ticker_name = ticker[0]
     ticker_row = ticker[1]
@@ -89,7 +89,7 @@ def ml_facebook_prophet(ticker):
     fb_model = Prophet()
     fb_model.fit(df_model)
 
-    future = fb_model.make_future_dataframe(periods=100)
+    future = fb_model.make_future_dataframe(periods=forecast_length)
     prophet_predictions = fb_model.predict(future)
 
     prophet_graph = fb_model.plot(prophet_predictions)
@@ -150,7 +150,7 @@ def ml_lstm(ticker):
 
 
 # Linear Regression # 
-def ml_linear_regression(ticker):
+def ml_linear_regression(ticker, forecast_length):
 
     ticker_name = ticker[0]
     ticker_row = ticker[1]
@@ -163,7 +163,7 @@ def ml_linear_regression(ticker):
 
     # use model to make extended predictions
     model.fit(np.arange(len(close_prices)).reshape(-1, 1), close_prices)
-    extend_lin_x = np.arange(0, len(close_prices) + 100)
+    extend_lin_x = np.arange(0, len(close_prices) + forecast_length)
     extend_lin_y = model.predict(extend_lin_x.reshape(-1, 1))
 
     # plot actual and predicted values
@@ -198,11 +198,12 @@ def forecasting(ticker, prophet_predictions, linear_regression):
     else:
         buy_sell = "Hold"
 
+    #text_box_y = prophet_preds['yhat'].iloc[-1]
+
     graph = prophet_model.plot(prophet_preds)
     graph.show()
-
     plt.plot(prophet_preds['ds'], linear_y, color="orange",label="Predicted Price")  # linear regression
-    plt.text(prophet_preds['ds'].iloc[20], 156, f"Buy or Sell?\n\n {buy_sell.upper()}", ha='center', va='center', bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.8))
+    plt.text(prophet_preds['ds'].iloc[80], prophet_preds['yhat'].iloc[-1], f"Buy or Sell?\n\n {buy_sell.upper()}", ha='center', va='center', bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.8))
     plt.title(f"{ticker_name} - Forecasting")
     plt.xlabel("Date")
     plt.ylabel("Close Price")

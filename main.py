@@ -59,8 +59,8 @@ ana_rows = [amd, orly, bkng, nflx]
 ### Data Predictions ###
 # -------------------- #
 '''arima_predictions = dPred.ml_arima(amd) ''' # ARIMA prediction model
-prophet_predictions = dPred.ml_facebook_prophet(amd)  # Facebook Prophet prediction model
+prophet_predictions = dPred.ml_facebook_prophet(amd, forecast_length=5)  # Facebook Prophet prediction model (forecast_length = 5 (1 week)/10 (2 weeks)/25 (1 month))
 '''dPred.ml_lstm(bkng) ''' # LSTM Prediction Model
-linear_regression = dPred.ml_linear_regression(amd)  # Linear Regression Model
+linear_regression = dPred.ml_linear_regression(amd, forecast_length=5)  # Linear Regression Model
 
 dPred.forecasting(amd, prophet_predictions,  linear_regression) 
