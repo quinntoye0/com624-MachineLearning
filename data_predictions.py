@@ -186,14 +186,23 @@ def forecasting(ticker, prophet_predictions, linear_regression):
 
     prophet_model = prophet_predictions[0]
     prophet_preds = prophet_predictions[1]
+    prophet_pred_vals = prophet_preds['yhat']
 
-    linear_x = linear_regression[0]
     linear_y = linear_regression[1]
+
+    buy_sell = ""
+    if prophet_pred_vals.iloc[-1] < linear_y[-1]:
+        buy_sell = "Buy"
+    elif prophet_pred_vals.iloc[-1] > linear_y[-1]:
+        buy_sell = "Sell"
+    else:
+        buy_sell = "Hold"
 
     graph = prophet_model.plot(prophet_preds)
     graph.show()
 
     plt.plot(prophet_preds['ds'], linear_y, color="orange",label="Predicted Price")  # linear regression
+    plt.text(prophet_preds['ds'].iloc[20], 156, f"Buy or Sell?\n\n {buy_sell.upper()}", ha='center', va='center', bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.8))
     plt.title(f"{ticker_name} - Forecasting")
     plt.xlabel("Date")
     plt.ylabel("Close Price")
