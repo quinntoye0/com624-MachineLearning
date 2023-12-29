@@ -87,20 +87,3 @@ def eda_histogram(ticker):
     return graph
 
 
-# scatter plot to show distribution of closing prices
-def eda_scatter(ticker):
-
-    ticker_name= ticker[0]
-    ticker_row = ticker[1]
-
-    fig = figure.Figure(figsize=(5, 4))
-    ax = fig.add_subplot(111)
-
-    ax.set_title(f"{ticker_name} - Scatter PLot of Closing Values 1 Year")
-    ax.set_xlabel("Date")
-    ax.set_ylabel("Closing Price (USD)")
-    ax.scatter(ticker_row.index, ticker_row)
-    graph = fig
-
-    return graph
-

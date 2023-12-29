@@ -58,7 +58,6 @@ graphs = []
 graphs.append(dAna.eda_line_chart(cprt))  # Line chart with all analysis stocks    ######### REPLACE ROW WITH USER CHOSEN ONE - NOT HARD CODED TICKER ROW
 graphs.append(dAna.eda_box_plot(cprt))  # Box plot with all analysis stocks   ######### REPLACE ROW WITH USER CHOSEN ONE - NOT HARD CODED TICKER ROW
 graphs.append(dAna.eda_histogram(cprt))  # Histogram with analysis stocks
-#graphs.append(dAna.eda_scatter(cprt))  # Scatter plot with analysis stocks
 
 # Correlation #
 correlation = dAna.data_correlation(df, analysis_tickers, cprt)  # Data Correlation 
