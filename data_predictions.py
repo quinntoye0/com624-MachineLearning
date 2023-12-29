@@ -3,6 +3,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.figure as figure
 from statsmodels.tsa.arima.model import ARIMA
 from pmdarima import auto_arima
 from prophet import Prophet
@@ -63,18 +64,20 @@ def ml_arima(ticker):
     rmse = math.sqrt(mean_squared_error(y, arima_predictions))
     print('RMSE: '+str(rmse))
 
-    plt.figure(figsize=(16,8))
-    plt.plot(ticker_row, color='green', label='Train Stock Price')
-    plt.plot(test.index, y, color='red', label='Real Stock Price')
-    plt.plot(test.index, arima_predictions, color='blue', label='Predicted Stock Price')
+    fig = figure.Figure(figsize=(8, 4))
+    ax = fig.add_subplot(111)
 
-    plt.legend()
-    plt.xlabel("Date")
-    plt.ylabel("Stock Price")
-    plt.title(f"{ticker_name} - Nasdaq Closing Price Forecast (ARIMA)")
-    plt.show()
+    ax.plot(ticker_row, color='green', label='Train Stock Price')
+    ax.plot(test.index, y, color='red', label='Real Stock Price')
+    ax.plot(test.index, arima_predictions, color='blue', label='Predicted Stock Price')
+    ax.legend()
+    ax.set_title("Nasdaq Closing Price Forecast (ARIMA)")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Closing Price (USD)")
+    
+    graph = fig
 
-    return (test.index, arima_predictions)
+    return graph
 
 # Facebook Prophet #
 def ml_facebook_prophet(ticker, forecast_length):
@@ -92,15 +95,19 @@ def ml_facebook_prophet(ticker, forecast_length):
     future = fb_model.make_future_dataframe(periods=forecast_length)
     prophet_predictions = fb_model.predict(future)
 
-    prophet_graph = fb_model.plot(prophet_predictions)
-    prophet_graph.show()
+    fig = figure.Figure(figsize=(8, 4))
+    ax = fig.add_subplot(111)
 
-    plt.xlabel("Date")
-    plt.ylabel(f"Nasdaq Closing Price")
-    plt.title(f"{ticker_name} - Nasdaq Closing Price Forecast (Prophet)")
-    plt.show()
+    fb_model.plot(prophet_predictions, ax=ax)
 
-    return (fb_model, prophet_predictions)
+    ax.legend()
+    ax.set_title("Nasdaq Closing Price Forecast (Prophet)")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Closing Price (USD)")
+    
+    graph = fig
+
+    return (fb_model, prophet_predictions, graph)
 
 # LSTM #
 def ml_lstm(ticker):
@@ -138,16 +145,19 @@ def ml_lstm(ticker):
     predictions = model.predict(test_X)
     predictions = predictions.reshape(78, 10)  # reshapes to 2D
 
-    # plot actual and predicted values
-    plt.figure(figsize=(12, 6))
-    plt.plot(test_y, label="Actual Price")
-    plt.plot(predictions, label="Predicted Price")
-    plt.title(f"{ticker_name} - LSTM")
-    plt.xlabel("Time Step")
-    plt.ylabel("Value")
-    plt.legend()
-    plt.show()
+    fig = figure.Figure(figsize=(8, 4))
+    ax = fig.add_subplot(111)
 
+    ax.plot(test_y, label="Actual Price")
+    ax.plot(predictions, label="Predicted Price")
+    ax.legend()
+    ax.set_title("Nasdaq Closing Price Forecast (LSTM)")
+    ax.set_xlabel("Time Step")
+    ax.set_ylabel("Closing Price (USD)")
+    
+    graph = fig
+
+    return graph
 
 # Linear Regression # 
 def ml_linear_regression(ticker, forecast_length):
@@ -167,16 +177,19 @@ def ml_linear_regression(ticker, forecast_length):
     extend_lin_y = model.predict(extend_lin_x.reshape(-1, 1))
 
     # plot actual and predicted values
-    plt.figure(figsize=(12, 6))
-    plt.plot(close_prices, label="Actual Price")
-    plt.plot(extend_lin_x, extend_lin_y, label="Predicted Price")
-    plt.title(f"{ticker_name} - Linear Regression")
-    plt.xlabel("Time")
-    plt.ylabel("Close Price")
-    plt.legend()
-    plt.show()
+    fig = figure.Figure(figsize=(8, 4))
+    ax = fig.add_subplot(111)
 
-    return (extend_lin_x, extend_lin_y)
+    ax.plot(close_prices, label="Actual Price")
+    ax.plot(extend_lin_x, extend_lin_y, label="Predicted Price")
+    ax.legend()
+    ax.set_title("Nasdaq Closing Price Forecast (Linear Regression)")
+    ax.set_xlabel("Time")
+    ax.set_ylabel("Closing Price (USD)")
+    
+    graph = fig
+
+    return (extend_lin_x, extend_lin_y, graph)
 
 
 def forecasting(ticker, prophet_predictions, linear_regression):
@@ -186,6 +199,8 @@ def forecasting(ticker, prophet_predictions, linear_regression):
 
     prophet_model = prophet_predictions[0]
     prophet_preds = prophet_predictions[1]
+    prophet_graph = prophet_predictions[2]
+
     prophet_pred_vals = prophet_preds['yhat']
 
     linear_y = linear_regression[1]
@@ -198,18 +213,21 @@ def forecasting(ticker, prophet_predictions, linear_regression):
     else:
         buy_sell = "Hold"
 
-    #text_box_y = prophet_preds['yhat'].iloc[-1]
+    fig = figure.Figure(figsize=(8, 4))
+    ax = fig.add_subplot(111)
 
-    graph = prophet_model.plot(prophet_preds)
-    graph.show()
-    plt.plot(prophet_preds['ds'], linear_y, color="orange",label="Predicted Price")  # linear regression
-    plt.text(prophet_preds['ds'].iloc[80], prophet_preds['yhat'].iloc[-1], f"Buy or Sell?\n\n {buy_sell.upper()}", ha='center', va='center', bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.8))
-    plt.title(f"{ticker_name} - Forecasting")
-    plt.xlabel("Date")
-    plt.ylabel("Close Price")
-    plt.legend()
-    plt.show()
+    prophet_model.plot(prophet_preds, ax=ax)
 
+    ax.plot(prophet_preds['ds'], linear_y, color="orange",label="Predicted Price")  # linear regression
+    ax.text(prophet_preds['ds'].iloc[180], prophet_preds['yhat'].iloc[-1], f"Buy or Sell?\n\n {buy_sell.upper()}", ha='center', va='center', bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.8))
 
+    ax.legend()
+    ax.set_title("Forecasting")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Closing Price (USD)")
+
+    graph = fig
+
+    return graph
 
 
