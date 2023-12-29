@@ -42,6 +42,36 @@ nflx = ("NFLX", ana_rows[3])
 ana_rows = [cprt, orly, bkng, nflx]
 
 
+### Data Analysis ###
+# ----------------- #
+
+def graphing(df, analysis_tickers, ticker):
+
+    graphs = []
+
+    # Exploratory Data Analysis #
+    graphs.append(dAna.eda_line_chart(ticker))  # Line chart with all analysis stocks    ######### REPLACE ROW WITH USER CHOSEN ONE - NOT HARD CODED TICKER ROW
+    graphs.append(dAna.eda_box_plot(ticker))  # Box plot with all analysis stocks   ######### REPLACE ROW WITH USER CHOSEN ONE - NOT HARD CODED TICKER ROW
+    graphs.append(dAna.eda_histogram(ticker))  # Histogram with analysis stocks
+
+    # Correlation #
+    correlation = dAna.data_correlation(df, analysis_tickers, ticker)  # Data Correlation 
+
+
+    ### Data Predictions ###
+    # -------------------- #
+    graphs.append(dPred.ml_arima(ticker))  # ARIMA prediction model
+    prophet_predictions = dPred.ml_facebook_prophet(ticker, forecast_length=5)  # Facebook Prophet prediction model (forecast_length = 5 (1 week)/10 (2 weeks)/25 (1 month))
+    graphs.append(prophet_predictions[2])
+    graphs.append(dPred.ml_lstm(ticker))  # LSTM Prediction Model
+    linear_regression = dPred.ml_linear_regression(ticker, forecast_length=5)  # Linear Regression Model
+    graphs.append(linear_regression[2])
+
+    graphs.append(dPred.forecasting(ticker, prophet_predictions,  linear_regression))
+
+    return(graphs, correlation)
+
+
 ### Tkinter GUI ###
 # --------------- #
 window = tk.Tk()  # initialises gui window
@@ -49,34 +79,28 @@ window.state("zoomed")  # makes window fullscreen
 window.title("Nasdaq Stock Analysis and Predictions")  # sets window title
 
 
-### Data Analysis ###
-# ----------------- #
+# Display Graphs #
+def display_tkinter_content(df, analysis_tickers, ana_ticker):
+    graphing_tuple = graphing(df, analysis_tickers, ana_ticker)
 
-graphs = []
+    graphs = graphing_tuple[0]
+    correlation = graphing_tuple[1]
 
-# Exploratory Data Analysis #
-graphs.append(dAna.eda_line_chart(cprt))  # Line chart with all analysis stocks    ######### REPLACE ROW WITH USER CHOSEN ONE - NOT HARD CODED TICKER ROW
-graphs.append(dAna.eda_box_plot(cprt))  # Box plot with all analysis stocks   ######### REPLACE ROW WITH USER CHOSEN ONE - NOT HARD CODED TICKER ROW
-graphs.append(dAna.eda_histogram(cprt))  # Histogram with analysis stocks
+    # display graphs
+    canvases = []
+    for i in range(len(graphs)):
+        
+        fig_canvas = FigureCanvasTkAgg(graphs[i], master=content_frame)
+        canvases.append(fig_canvas)
 
-# Correlation #
-correlation = dAna.data_correlation(df, analysis_tickers, cprt)  # Data Correlation 
+    for i in range(4):
+        for j in range(2):
+            canvases[i*2 + j].get_tk_widget().grid(row=i+1, column=j)
 
-
-### Data Predictions ###
-# -------------------- #
-graphs.append(dPred.ml_arima(cprt))  # ARIMA prediction model
-prophet_predictions = dPred.ml_facebook_prophet(cprt, forecast_length=5)  # Facebook Prophet prediction model (forecast_length = 5 (1 week)/10 (2 weeks)/25 (1 month))
-graphs.append(prophet_predictions[2])
-graphs.append(dPred.ml_lstm(cprt))  # LSTM Prediction Model
-linear_regression = dPred.ml_linear_regression(cprt, forecast_length=5)  # Linear Regression Model
-graphs.append(linear_regression[2])
-
-graphs.append(dPred.forecasting(cprt, prophet_predictions,  linear_regression))
+    tk.Label(content_frame, text=correlation).grid(row=6, column=0)
 
 
 # Tkinter Window Management #
-# ------------------------- #
 
 # set up main frame
 main_frame = Frame(window)
@@ -100,31 +124,46 @@ content_frame = Frame(canvas)
 # add content_fram to window in canvas 
 canvas.create_window((0,0), window=content_frame, anchor="nw")
 
-# display graphs
-canvases = []
-for i in range(len(graphs)):
-    
-    fig_canvas = FigureCanvasTkAgg(graphs[i], master=content_frame)
-    canvases.append(fig_canvas)
 
-for i in range(4):  # if i > 0 then for j. else add the top bar with dropmenus
-    for j in range(2):
-        canvases[i*2 + j].get_tk_widget().grid(row=i, column=j)
+# Tkinter Content #
 
-correlation_label = tk.Label(content_frame, text=correlation).grid(row=5, column=0)
+tk.Label(content_frame, text="Select a ticker for analysis: ").grid(row=0, column=0, pady=10)
+
+selected_option = tk.StringVar(content_frame)
+selected_option.set("CPRT")  # Set initial value
+
+# Create the dropdown menu using ttk.Combobox
+dropdown_menu = ttk.Combobox(
+    content_frame,
+    textvariable=selected_option,  # Link to the variable
+    values=analysis_tickers,  # Set available options
+    width=20)
+dropdown_menu.grid(row=0, column=1)
 
 
-# plot_frame = tk.Frame(window)
-# plot_frame.pack()
+def option_selected(event):
 
-# canvas1 = FigureCanvasTkAgg(eda_line_chart, master=window)
-# canvas1.get_tk_widget().grid(row=0, column=0)
-# canvas1.draw()
-# #canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+    ana_ticker = cprt
+    if selected_option.get() == "CPRT":
+        ana_ticker = cprt
+    if selected_option.get() == "ORLY":
+        ana_ticker = orly
+    if selected_option.get() == "BKNG":
+        ana_ticker = bkng
+    if selected_option.get() == "NFLX":
+        ana_ticker = nflx
 
-# canvas2 = FigureCanvasTkAgg(eda_box_plot, master=window)
-# canvas2.get_tk_widget().grid(row=0, column=1)
-# canvas2.draw()
+    display_tkinter_content(df, analysis_tickers, ana_ticker)
+
+# Bind the function to the dropdown menu's selection event
+dropdown_menu.bind("<<ComboboxSelected>>", option_selected)
+
+
+
+
+
+
+
 
 window.mainloop()
 
