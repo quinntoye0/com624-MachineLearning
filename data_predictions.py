@@ -48,7 +48,7 @@ def ml_arima(ticker):
     # rolling forecasts
     for i in range(1, len(y)):
         # predict
-        model = ARIMA(history, order=(1,1,0))
+        model = ARIMA(history, order=(model_order))
         model_fit = model.fit()
         yhat = model_fit.forecast()[0]
         arima_predictions.append(yhat)
@@ -63,6 +63,8 @@ def ml_arima(ticker):
     print('MAE: '+str(mae))
     rmse = math.sqrt(mean_squared_error(y, arima_predictions))
     print('RMSE: '+str(rmse))
+    rmspe = np.sqrt(np.mean(np.square(((y - arima_predictions) / y)))) * 100
+    print("RMSPE:", rmspe)
 
     fig = figure.Figure(figsize=(8, 4))
     ax = fig.add_subplot(111)
@@ -143,7 +145,7 @@ def ml_lstm(ticker):
 
     # make predictions
     predictions = model.predict(test_X)
-    predictions = predictions.reshape(79, 10)  # reshapes to 2D
+    predictions = predictions.reshape(78, 10)  # reshapes to 2D
 
     fig = figure.Figure(figsize=(8, 4))
     ax = fig.add_subplot(111)

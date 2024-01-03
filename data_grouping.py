@@ -35,8 +35,6 @@ def pca_reduction(df):
 # --------------------- #
 def kmeans(df):
 
-    '''
-
     ### KMEANS HAS BEEN USED TO CREATE CLUSTERS (SEE 'clusters.txt') ###
     ### THIS FUNCTION NEED NOT BE USED UNLESS WANTING TO RECLUSTER   ###
 
@@ -97,7 +95,6 @@ def kmeans(df):
         for ticker in c3:
             clusters_file.write(ticker + "\n")
 
-    '''
 
 def select_analysis_rows(df, analysis_tickers):
 

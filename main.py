@@ -14,7 +14,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 
 ### Chosen tickers list for analysis ###
 ### -------------------------------- ###
@@ -50,8 +50,8 @@ def graphing(df, analysis_tickers, ticker):
     graphs = []
 
     # Exploratory Data Analysis #
-    graphs.append(dAna.eda_line_chart(ticker))  # Line chart with all analysis stocks    ######### REPLACE ROW WITH USER CHOSEN ONE - NOT HARD CODED TICKER ROW
-    graphs.append(dAna.eda_box_plot(ticker))  # Box plot with all analysis stocks   ######### REPLACE ROW WITH USER CHOSEN ONE - NOT HARD CODED TICKER ROW
+    graphs.append(dAna.eda_line_chart(ticker))  # Line chart with all analysis stocks
+    graphs.append(dAna.eda_box_plot(ticker))  # Box plot with all analysis stocks
     graphs.append(dAna.eda_histogram(ticker))  # Histogram with analysis stocks
 
     # Correlation #
