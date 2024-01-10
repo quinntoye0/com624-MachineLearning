@@ -1,6 +1,5 @@
 ### Package imports ###
 # ------------------- #
-import matplotlib.pyplot as plt
 import matplotlib.figure as figure
 
 

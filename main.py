@@ -7,13 +7,9 @@ import data_predictions as dPred
 
 ### Package imports ###
 # ------------------- #
-import numpy as np
-import pandas as pd
-from pandas_datareader import data as pdr
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 
 ### Chosen tickers list for analysis ###
