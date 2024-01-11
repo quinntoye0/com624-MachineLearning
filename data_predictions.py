@@ -144,7 +144,7 @@ def ml_lstm(ticker):
 
     # make predictions
     predictions = model.predict(test_X)
-    predictions = predictions.reshape(79, 10)  # reshapes to 2D
+    predictions = predictions.reshape(78, 10)  # reshapes to 2D
 
     fig = figure.Figure(figsize=(8, 4))
     ax = fig.add_subplot(111)
